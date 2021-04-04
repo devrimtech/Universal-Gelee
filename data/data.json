@@ -1,0 +1,16 @@
+{
+  "payloads": [
+    {
+      "name": "Sample Payload",
+      "link": "http://misc.ktemkin.com/fusee.bin"
+    },
+    {
+      "name": "Sample Payload",
+      "link": "http://misc.ktemkin.com/fusee.bin"
+    },
+    {
+      "name": "Sample Payload",
+      "link": "http://misc.ktemkin.com/fusee.bin"
+    }
+]
+}
