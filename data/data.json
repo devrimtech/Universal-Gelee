@@ -2,15 +2,11 @@
   "payloads": [
     {
       "name": "Sample Payload",
-      "link": "http://misc.ktemkin.com/fusee.bin"
+      "link": "https://misc.ktemkin.com/fusee.bin"
     },
     {
-      "name": "Sample Payload",
-      "link": "http://misc.ktemkin.com/fusee.bin"
-    },
-    {
-      "name": "Sample Payload",
-      "link": "http://misc.ktemkin.com/fusee.bin"
+      "name": "Atmosphere",
+      "link": "https://github.com/Atmosphere-NX/Atmosphere/releases/latest/download/fusee-primary.bin"
     }
 ]
 }

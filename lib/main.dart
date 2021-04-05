@@ -1,11 +1,21 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/foundation.dart';
+import 'package:path_provider/path_provider.dart';
 
-Future<String> getJson() async {
-  return await rootBundle.loadString('data/data.json');
+var httpClient = new HttpClient();
+Future<File> _downloadFile(String? url) async {
+  var request = await httpClient.getUrl(Uri.parse(url!));
+  var response = await request.close();
+  var bytes = await consolidateHttpClientResponseBytes(response);
+  String dir = (await getApplicationDocumentsDirectory()).path;
+  File file = new File('$dir/payload.bin');
+  await file.writeAsBytes(bytes);
+  return file;
 }
 
 void main() => runApp(MyApp());
@@ -35,15 +45,13 @@ class MyStatefulWidget extends StatefulWidget {
 }
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  String? _mySelection = "Atmosphere";
-  Future<String> getJson() {
-    return rootBundle.loadString('data.json');
-  }
+  String? _mySelection = "https://misc.ktemkin.com/fusee.bin";
+  Future<String> getJson() => rootBundle.loadString('data/data.json');
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      body: new Center(
+    return Scaffold(
+      body: Center(
         child: FutureBuilder<String>(
             future: getJson(),
             builder: (context, snapshot) {
@@ -51,32 +59,29 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
               if (snapshot.hasError) {
                 return Center(child: Text(snapshot.error?.toString() ?? ''));
               }
-              final Map<String, dynamic> _data = jsonDecode(snapshot.data!);
-              return DropdownButton<String>(
+              final List _data = jsonDecode(snapshot.data!)["payloads"];
+              return DropdownButton(
                 isDense: true,
                 hint: Text("Select"),
                 value: _mySelection,
                 onChanged: (String? newValue) {
+                  print(newValue);
+                  _downloadFile(newValue);
                   setState(() {
                     _mySelection = newValue;
                   });
 
                   print(_mySelection);
                 },
-                items: _data["payloads"]
-                    .map((key, map) {
-                      return MapEntry(
-                        key,
-                        DropdownMenuItem<String>(
-                          value: map["link"].toString(),
-                          child: new Text(
-                            map["name"],
-                          ),
-                        ),
-                      );
-                    })
-                    .values
-                    .toList(),
+                items: _data.map((map) {
+                  print(map["link"]);
+                  return DropdownMenuItem<String>(
+                    value: map["link"],
+                    child: Text(
+                      map["name"],
+                    ),
+                  );
+                }).toList(),
               );
             }),
       ),
